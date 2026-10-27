@@ -260,12 +260,14 @@ $("start").onclick = async () => {
   launchGame();
 };
 
+
 function launchGame() {
   if (started || !roomCode) return;
   started = true;
-  const target = "Don%27t%20Let%20Them%20In.html";
+  const target = "Don%E2%80%99t%20Let%20Them%20In.html";
   location.href = target + "?room=" + encodeURIComponent(roomCode);
 }
+
 
 $("leave").onclick = async () => {
   if (channel) await db.removeChannel(channel);
