@@ -8,83 +8,277 @@
   <style>
     * { box-sizing: border-box; }
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
       background: radial-gradient(ellipse, #301313, #090909 70%);
-      color: #f5eeee;
-      font-family: Arial, sans-serif;
-      text-align: center;
+      color: #f5eeee; font-family: Arial, sans-serif; text-align: center;
     }
     main {
-      width: min(440px, 92%);
-      padding: 36px 24px;
-      background: #151111;
-      border: 1px solid #633030;
-      border-radius: 12px;
-      box-shadow: 0 0 45px #000;
+      width: min(440px, 92%); padding: 36px 24px;
+      background: #151111; border: 1px solid #633030;
+      border-radius: 12px; box-shadow: 0 0 45px #000;
     }
-    h1 { color: #ef5555; font-size: 2.4rem; }
+    h1 { color: #ef5555; font-size: 2.2rem; }
     p { color: #c5baba; line-height: 1.5; }
     input, button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border-radius: 7px;
-      font-size: 1rem;
+      width: 100%; padding: 14px; margin-top: 12px;
+      border-radius: 7px; font-size: 1rem;
     }
     input {
-      background: #090909;
-      color: white;
-      border: 1px solid #604444;
-      text-align: center;
-      text-transform: uppercase;
+      background: #090909; color: white; border: 1px solid #604444;
+      text-align: center; text-transform: uppercase;
     }
     button {
-      background: #a52a2a;
-      color: white;
-      border: 0;
-      cursor: pointer;
-      font-weight: bold;
+      background: #a52a2a; color: white; border: 0;
+      cursor: pointer; font-weight: bold;
     }
     button:hover { background: #c43b3b; }
-    button:disabled { opacity: .5; cursor: wait; }
-    #status { min-height: 24px; font-size: .9rem; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    #status { min-height: 24px; font-size: .9rem; overflow-wrap: anywhere; }
     .note { font-size: .8rem; color: #9c8d8d; }
+    #room { display: none; border-top: 1px solid #633030; margin-top: 20px; padding-top: 10px; }
+    #roomCode { font-size: 2rem; letter-spacing: .2em; color: #ef5555; }
+    #players { padding: 0; list-style: none; }
+    #players li { padding: 8px; background: #241818; margin: 6px 0; border-radius: 6px; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>DON'T LET THEM IN</h1>
-    <p>Trust no one. Check the doors. Survive together.</p>
+<main>
+  <h1>DON'T LET THEM IN</h1>
+  <p>Trust no one. Check the doors. Survive together.</p>
 
-    <button id="create">CREATE PRIVATE ROOM</button>
+  <button id="create">CREATE PRIVATE ROOM</button>
+  <p>— OR JOIN YOUR FRIENDS —</p>
+  <input id="code" maxlength="6" placeholder="ENTER ROOM CODE" autocomplete="off">
+  <button id="join">JOIN ROOM</button>
 
-    <p>— OR JOIN YOUR FRIENDS —</p>
-    <input id="code" maxlength="6"
-      placeholder="ENTER ROOM CODE" autocomplete="off">
-    <button id="join">JOIN ROOM</button>
+  <section id="room">
+    <p>ROOM CODE</p>
+    <div id="roomCode"></div>
+    <p id="count">Players: 1/4</p>
+    <ul id="players"></ul>
+    <button id="start" hidden>START GAME</button>
+    <button id="leave">LEAVE ROOM</button>
+  </section>
 
-    <p id="status">Multiplayer lobby setup in progress.</p>
-    <p class="note">Private rooms · Up to 4 players</p>
-  </main>
+  <p id="status">Create a room or join with a code.</p>
+  <p class="note">Private rooms · Up to 4 players</p>
+</main>
 
-  <script>
-    document.getElementById('create').onclick = () => {
-      document.getElementById('status').textContent =
-        'Room creation will be enabled in the next setup step.';
-    };
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://penoriyioopzewtvphbs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_WMUjoQxLqBUVE8nFvpRDpw_uo8Z4Bdn";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.getElementById('join').onclick = () => {
-      const code = document.getElementById('code').value
-        .trim().toUpperCase();
+const $ = id => document.getElementById(id);
+const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const playerId = crypto.randomUUID();
+const playerName = "Player-" + playerId.slice(0, 4).toUpperCase();
 
-      document.getElementById('status').textContent =
-        /^[A-Z0-9]{6}$/.test(code)
-          ? 'Room connection will be enabled in the next setup step.'
-          : 'Enter a valid 6-character room code.';
-    };
-  </script>
+let roomCode = null;
+let isHost = false;
+let channel = null;
+let started = false;
+let joining = false;
+
+function say(message) { $("status").textContent = message; }
+
+function makeCode() {
+  let result = "";
+  for (let i = 0; i < 6; i++)
+    result += alphabet[Math.floor(Math.random() * alphabet.length)];
+  return result;
+}
+
+function showRoom(code) {
+  $("room").style.display = "block";
+  $("roomCode").textContent = code;
+  $("start").hidden = !isHost;
+  $("create").disabled = true;
+  $("join").disabled = true;
+  $("code").disabled = true;
+}
+
+function renderPlayers() {
+  if (!channel) return;
+  const state = channel.presenceState();
+  const players = Object.values(state).flat();
+  $("count").textContent = `Players: ${players.length}/4`;
+  $("players").replaceChildren();
+
+  players.forEach(player => {
+    const li = document.createElement("li");
+    li.textContent = player.name + (player.id === playerId ? " (You)" : "");
+    $("players").appendChild(li);
+  });
+
+  $("start").disabled = players.length < 1 || players.length > 4 || started;
+}
+
+async function enterRoom(code) {
+  if (joining || roomCode) return;
+  joining = true;
+  $("create").disabled = true;
+  $("join").disabled = true;
+
+  try {
+    const { data: room, error } = await db
+      .from("game_rooms")
+      .select("room_code")
+      .eq("room_code", code)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!room) throw new Error("Room not found. Check the code.");
+
+    roomCode = code;
+    isHost = false;
+    await connectChannel();
+  } catch (err) {
+    roomCode = null;
+    say(err.message || "Couldn't join the room.");
+    $("create").disabled = false;
+    $("join").disabled = false;
+  } finally {
+    joining = false;
+  }
+}
+
+async function connectChannel() {
+  showRoom(roomCode);
+  say("Connecting to room...");
+
+  channel = db.channel("game-room-" + roomCode, {
+    config: { presence: { key: playerId } }
+  });
+
+  channel
+    .on("presence", { event: "sync" }, renderPlayers)
+    .on("broadcast", { event: "start" }, payload => {
+      if (payload.payload?.roomCode === roomCode) launchGame();
+    });
+
+  await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error("Connection timed out.")), 10000);
+
+    channel.subscribe(async status => {
+      if (status === "SUBSCRIBED") {
+        clearTimeout(timeout);
+        const state = channel.presenceState();
+        const count = Object.values(state).flat().length;
+
+        if (count >= 4) {
+          await db.removeChannel(channel);
+          channel = null;
+          roomCode = null;
+          $("room").style.display = "none";
+          $("create").disabled = false;
+          $("join").disabled = false;
+          reject(new Error("This room is full (4 players maximum)."));
+          return;
+        }
+
+        await channel.track({ id: playerId, name: playerName });
+        say(isHost ? "Room created. Share the code with your friends." : "Joined room!");
+        renderPlayers();
+        resolve();
+      } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        clearTimeout(timeout);
+        reject(new Error("Realtime connection failed. Check Supabase Realtime settings."));
+      }
+    });
+  }).catch(async err => {
+    if (channel) await db.removeChannel(channel);
+    channel = null;
+    roomCode = null;
+    $("room").style.display = "none";
+    $("create").disabled = false;
+    $("join").disabled = false;
+    throw err;
+  });
+}
+
+$("create").onclick = async () => {
+  $("create").disabled = true;
+  say("Creating room...");
+
+  try {
+    let code, error;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      code = makeCode();
+      const result = await db.from("game_rooms").insert({
+        room_code: code,
+        created_by: playerId
+      });
+      error = result.error;
+      if (!error) break;
+      if (error.code !== "23505") throw error;
+    }
+    if (error) throw error;
+
+    roomCode = code;
+    isHost = true;
+    await connectChannel();
+  } catch (err) {
+    roomCode = null;
+    say("Couldn't create room: " + (err.message || "Unknown error"));
+    $("create").disabled = false;
+  }
+};
+
+$("join").onclick = async () => {
+  const code = $("code").value.trim().toUpperCase();
+  if (!/^[A-Z0-9]{6}$/.test(code)) {
+    say("Enter a valid 6-character room code.");
+    return;
+  }
+  try {
+    await enterRoom(code);
+  } catch (err) {
+    say(err.message || "Couldn't join room.");
+  }
+};
+
+$("start").onclick = async () => {
+  if (!isHost || !channel || started) return;
+  const players = Object.values(channel.presenceState()).flat();
+  if (players.length < 1 || players.length > 4) {
+    say("The room must have 1–4 players to start.");
+    return;
+  }
+
+  const { error } = await channel.send({
+    type: "broadcast",
+    event: "start",
+    payload: { roomCode }
+  });
+
+  if (error) {
+    say("Couldn't send the start signal.");
+    return;
+  }
+  launchGame();
+};
+
+function launchGame() {
+  if (started || !roomCode) return;
+  started = true;
+  const target = "Don%27t%20Let%20Them%20In.html";
+  location.href = target + "?room=" + encodeURIComponent(roomCode);
+}
+
+$("leave").onclick = async () => {
+  if (channel) await db.removeChannel(channel);
+  channel = null;
+  roomCode = null;
+  isHost = false;
+  started = false;
+  $("room").style.display = "none";
+  $("create").disabled = false;
+  $("join").disabled = false;
+  $("code").disabled = false;
+  say("You left the room.");
+};
+</script>
 </body>
 </html>
