@@ -32,7 +32,7 @@ button.pri{background:var(--acc);border-color:var(--acc);color:#fff;margin-top:1
 #typ{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);z-index:7;display:none;justify-content:center}#typ.on{display:flex}
 #ti{width:min(520px,90vw);background:#120d0c;color:var(--ink);border:1px solid var(--acc);padding:10px;font:inherit}
 #pop{position:fixed;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;font-family:'Creepster',Georgia,serif;font-size:min(14vw,92px);letter-spacing:6px;color:#c9b9a2;text-shadow:0 0 22px #7a0d06;background:rgba(0,0,0,.88);opacity:0;pointer-events:none;transition:opacity .7s}#pop.on{opacity:1}
-#board{position:fixed;right:10px;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:6;font-size:12px;text-align:right;color:var(--mut);max-width:220px;pointer-events:none}
+
 #obj{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 32px);z-index:6;text-align:center;font-size:15px;color:#e8c8a0;text-shadow:0 0 6px #000;padding:0 12px;pointer-events:none}
 #stam{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:120px;height:6px;background:#2a2220;border-radius:3px;z-index:6;display:none}#stami{display:block;height:100%;background:#c9b9a2;border-radius:3px}
 #meters{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 30px);z-index:6;font-size:12px;color:var(--mut)}#meters i{display:inline-block;height:6px;background:#e8a040;border-radius:3px;vertical-align:middle}#meters i.w{background:#7ab0d8}
@@ -42,7 +42,7 @@ button.pri{background:var(--acc);border-color:var(--acc);color:#fff;margin-top:1
 #note{background:#e4dcc4;color:#2a2018;font-size:17px;transform:translate(-50%,-50%) rotate(-1.2deg)}#jr{background:#120d0cee;border:1px solid #4a3d36;color:var(--ink);transform:translate(-50%,-50%);font-size:15px}
 </style></head><body>
 <canvas id="c"></canvas><div class="o" id="vig"></div><div class="o" id="peep"></div><div class="o" id="grain"></div><div class="o" id="fade"></div>
-<div id="top"></div><button id="mute">🔊 (M)</button><div id="hud"></div><div id="sub"></div><div id="act"></div><div id="typ"><input id="ti" maxlength="140" placeholder="Ask them anything… (Enter to send, Esc to cancel)" autocomplete="off"></div><div id="pop"></div><div id="board"></div><div id="obj"></div><div id="stam"><i id="stami"></i></div><div id="meters"></div><div id="arrow"><i id="arri">▲</i><b id="arrb"></b></div><div id="note"></div><div id="jr"></div><div class="o" id="cold"></div><div class="b" id="bub"></div><div class="b" id="rb"></div>
+<div id="top"></div><button id="mute">🔊 (M)</button><div id="hud"></div><div id="sub"></div><div id="act"></div><div id="typ"><input id="ti" maxlength="140" placeholder="Ask them anything… (Enter to send, Esc to cancel)" autocomplete="off"></div><div id="pop"></div><div id="obj"></div><div id="stam"><i id="stami"></i></div><div id="meters"></div><div id="arrow"><i id="arri">▲</i><b id="arrb"></b></div><div id="note"></div><div id="jr"></div><div class="o" id="cold"></div><div class="b" id="bub"></div><div class="b" id="rb"></div>
 <div id="menu"><div id="mi"></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -71,7 +71,7 @@ want:{q:'What do you want from me?',h:['All I need is {want}.','I just want {wan
 const fill=(p,s)=>s.replace(/\{(\w+)\}/g,(m,k)=>p.v&&p.st[k+'2']&&Math.random()<.35?p.st[k+'2']:p.st[k]);
 const OBS=[[-3.1,-2.1,1.15,1.85],[-1.72,-1.48,.38,.62],[3.5,4.9,.45,.95],[-5.6,-5,.4,1],[-6,-1.2,3.3,3.5],[1.2,6,3.3,3.5],[-6,-1.2,8.1,8.3],[1.2,6,8.1,8.3],[-1.5,-1.3,8.2,10.2],[-1.5,-1.3,11.6,13.4],[2.2,3.2,3.85,6.15],[5,6,3.9,6.1],[-3.7,-2.8,4.75,5.65],[-3.5,-2.9,6,6.6],[-5.9,-5.4,6.05,6.55],[-5.6,-5,7.3,7.9],[1.4,3.4,8.85,11.6],[.3,1.2,12.65,13.3],[1.5,5.9,12.65,13.3],[5.5,6,9.1,10.9],[5.1,5.7,11.1,11.7],[-5.5,-3.7,10.6,13.2],[-3.55,-3.05,12.65,13.15],[-5.9,-5.3,8.7,10.1],[-2.1,-1.6,12,13.2],[-6,-.75,-.7,-.5],[.75,6,-.7,-.5],[-6.1,-5.9,-.7,13.5],[5.9,6.1,-.7,13.5],[-6,-1.35,13.3,13.5],[.15,6,13.3,13.5],[-4.1,-3.9,-4.9,-.7],[3.9,4.1,-4.9,-.7],[-4,-1,-4.9,-4.7],[1,4,-4.9,-4.7],[-10.2,-9.8,13.4,26.2],[9.8,10.2,13.4,26.2],[-10,10,25.8,26.2],[-10,-6,13.4,13.6],[6,10,13.4,13.6],[-7.4,-5.6,14.7,16.2],[-5.4,-4.6,16.6,17.4],[4.4,5.6,18.1,18.9],[6.5,9.5,21,23.8]];
 const hit=(x,z)=>OBS.some(b=>x>b[0]-.25&&x<b[1]+.25&&z>b[2]-.25&&z<b[3]+.25)||(!S.doorOpen&&x>-.8&&x<.8&&z>-.95&&z<-.25)||(!S.bdoor&&x>-1.4&&x<.1&&z>12.9&&z<13.7);
-let SMP=null,ROOM=null;const ME='Survivor '+(100+Math.random()*900|0);
+let SMP=null;
 // ---------- three.js scene
 const cv=$('c'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.shadowMap.enabled=true;R.setPixelRatio(Math.min(devicePixelRatio,2));
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x030202);scene.fog=new THREE.Fog(0x030202,3,22);
@@ -182,7 +182,7 @@ const later=(fn,ms)=>{const c=S;setTimeout(()=>{if(S===c)fn()},ms)};
 const show=(el,h)=>{el.innerHTML=h;el.dataset.on=h?1:''};
 const near=()=>cam.position.z<1.6&&Math.abs(cam.position.x)<1.4;
 const showScr=h=>{$('mi').innerHTML=h;$('menu').classList.add('on')},hideScreen=()=>$('menu').classList.remove('on');
-const topbar=()=>{$('top').innerHTML=S.state==='menu'?'':'<span>Night '+Math.min(S.night+1,5)+' of 5</span><span>Guilt '+S.strikes+'/3</span>';pres()};
+const topbar=()=>{$('top').innerHTML=S.state==='menu'?'':'<span>Night '+Math.min(S.night+1,5)+' of 5</span><span>Guilt '+S.strikes+'/3</span>'};
 function flash(c,o){const f=$('fade');f.style.transition='none';f.style.background=c;f.style.opacity=o}
 function talk(p,text,cb){clearTimeout(S.tt);S.tk=1;$('sub').innerHTML='<b>'+p.n+':</b> “'+text+'”';show($('bub'),'<b>'+p.n+'</b><br>“'+text+'”');speak(text,p.kind==='ent'?{pitch:.2,rate:.55,voice:voiceFor(p)}:p.kind==='haz'?{pitch:.7,rate:.85,voice:voiceFor(p)}:p.v&&p.sg.includes('voice')?{pitch:.4,rate:.7,voice:voiceFor(p)}:{pitch:p.pitch*(p.mood==='cheerful'?1.08:p.mood==='angry'?.92:1),rate:p.rate*({calm:.95,nervous:1.15,angry:1.1,cheerful:1.05,drunk:.7,weeping:.85,suspicious:.9}[p.mood]||1),voice:voiceFor(p)});const c=S;S.tt=setTimeout(()=>{if(S!==c)return;S.tk=0;$('sub').textContent='';show($('bub'),'');cb&&cb()},Math.max(1600,text.length*68))}
 // ---------- people
@@ -272,7 +272,7 @@ function makePerson(v,sg,role){
  const nm=pick(fem?FEMN:MALN),tw=shuf(TOWNS),jb=shuf(JOBS),a=nm.split('');a[a.length-1]=pick('xzqk'.split(''));
  const st={want:role?role.want:'a place to stay',town:tw[0],town2:tw[1],job:jb[0],job2:jb[1],kin:pick(KIN),pet:pick(['dog','cat']),petn:pick(PETN),spell:nm.split('').join('-'),spell2:a.join('-')};
  return {mood,role,g,hg,fem,eyes,mouth,tg,arms,v,sg,n:nm,st,plea:role?pick(role.plea):pick(PLEAS),qs:['want',...shuf(Object.keys(Q).filter(k=>k!=='want'))],cs:shuf(['teeth','hands','turn']),asked:{},pitch:fem?1.1+Math.random()*.3:.7+Math.random()*.3,rate:.9+Math.random()*.2,vi:Math.random()*9|0,tz:-2.1,nextBlink:2,blinkEnd:0,nerv:mood==='nervous',breathT:0,chk:null}}
-function nextKnock(){if(S.state!=='play')return;if(cam.position.z>13.5){later(nextKnock,3000);return}if(S.i>=S.count)return endNight();const v=S.vb?S.vb[S.i%S.vb.length]:Math.random()<.5;const e=(S.ev||[]).find(x=>x.at===S.i&&!x.done);if(e)e.done=1;const p=withSeed('p'+S.night+'.'+S.i+(e?'e':''),()=>e?makeSpecial(e.k):makePerson(v,takeSigns(),nextRole()));p.g.position.set(0,0,-7);scene.add(p.g);P=p;S.p=p;if(S.peep){p.said=1;later(()=>{if(S.p===p&&p.knocked&&!S.busy)talk(p,p.plea)},2800)}}
+function nextKnock(){if(S.state!=='play')return;if(cam.position.z>13.5){later(nextKnock,3000);return}if(S.i>=S.count)return endNight();const v=S.vb?S.vb[S.i%S.vb.length]:Math.random()<.5;const e=(S.ev||[]).find(x=>x.at===S.i&&!x.done);if(e)e.done=1;const p=e?makeSpecial(e.k):makePerson(v,takeSigns(),nextRole());p.g.position.set(0,0,-7);scene.add(p.g);P=p;S.p=p;if(S.peep){p.said=1;later(()=>{if(S.p===p&&p.knocked&&!S.busy)talk(p,p.plea)},2800)}}
 function ask(p,q,key){if(p.pend||p.chk||S.tk)return;p.pend=1;if(key)p.asked[key]=1;$('sub').textContent='You: “'+q+'”';show($('bub'),'<b>'+p.n+'</b><br>…');renderHud();aiAns(p,q,key).then(a=>{p.pend=0;if(S.p===p&&!S.busy)talk(p,a)})}
 async function aiAns(p,q,key){if(SMP){try{const s=p.st,h=(p.hist||[]).map(x=>'Q: '+x[0]+'\nA: '+x[1]).join('\n'),r=await SMP('You are role-playing a character at the door of a house in a horror story where Visitors (creatures that imitate humans) roam at night. Reply with ONLY the spoken line: 1-2 short sentences, no quotation marks, no stage directions.\nCharacter: '+p.n+', a '+(p.fem?'woman':'man')+' who is a '+s.job+' from '+s.town+'. Facts: family member '+s.kin+', pet '+s.pet+' named '+s.petn+'. Reason for coming to the door: '+s.want+'. Role: '+(p.role?p.role.k:'traveler')+'. Mood right now: '+(p.mood||'calm')+'.\n'+(p.v?'SECRET: you are a Visitor imitating a human. Stay in character as a frightened person, but let small uncanny slips show now and then (a detail that contradicts your facts, an odd literal answer, being strangely calm). Never admit it.':'You are an ordinary frightened human survivor. Answer naturally and consistently with your facts; you may be tense or evasive about painful things.')+'\nConversation so far:\n'+(h||'(none)')+'\nThe person inside asks: '+q+'\nYour reply:',{modelTier:'quick',cache:false});const a=(r.text||'').replace(/^["“\s]+|["”\s]+$/g,'');if(a){(p.hist=p.hist||[]).push([q,a]);return a}}catch(e){}}
  if(key&&Q[key])return fill(p,pick(p.v&&Math.random()<.6?Q[key].v:Q[key].h));return smartAns(p,q)}
@@ -329,20 +329,16 @@ function doorVis(v){door.visible=v;ph.visible=v;knob.visible=v}
 function peep(on){if(on&&!near())return;const was=S.peep;S.peep=on;if(on){S.hbT=0;S.hbN=1}document.body.classList.toggle('peep',on);if(on)doorVis(false);S.tw={t:0,from:cam.position.clone(),to:new THREE.Vector3(0,1.6,on?-.6:.45),f0:cam.fov,f1:on?95:60};if(on){const p=S.p;if(p&&p.knocked&&!p.said&&!S.busy){p.said=1;talk(p,p.plea)}}yaw=0;pitch=0}
 // ---------- game flow
 function resetWorld(){radioStatic(false);clearStalk();clearMon();ambient(false);chaseMusic(false);showObj('');$('stam').style.display='none';$('note').className='';$('jr').className='';$('arrow').style.display='none';$('meters').innerHTML='';$('cold').style.opacity=0;bdg.rotation.y=0;AN=null;S.tw=null;$('pop').className='';$('typ').classList.remove('on');[P,...EX,...G].forEach(q=>q&&scene.remove(q.g));P=null;EX=[];G=[];dg.rotation.y=0;doorVis(true);document.body.classList.remove('peep');flash('#000',0);cam.fov=60;cam.updateProjectionMatrix();cam.position.set(0,1.6,.45);yaw=0;pitch=0;$('sub').textContent='';show($('bub'),'');show($('rb'),'')}
-function newGame(){resetWorld();S={state:'morning',night:0,strikes:0,busy:0,in:0,out:0,seed:MODE==='lobby'?SEED:null,fuel:.8,warm:1,logs:0};hideScreen();lock();ambient(true);popup('NIGHT 1',2400,startNight)}
+function newGame(){resetWorld();S={state:'morning',night:0,strikes:0,busy:0,in:0,out:0,fuel:.8,warm:1,logs:0};hideScreen();lock();ambient(true);popup('NIGHT 1',2400,startNight)}
 const INTRO=['Three weeks ago a signal fell from the sky and the valley went dark.','With it came the Visitors. They copy people: faces, voices, even names. But the copies are never perfect.','They only come at night. They knock, they beg, and they wait for someone to open the door.','You are the last one left in the old farmhouse. The radio still works, and it warns you what to look for each night.','Let in the real survivors. Turn away the copies. Keep the fire burning and the power on, and live to see the all-clear.'];
 function intro(i){if(i>=INTRO.length)return newGame();S.ip=i;S.intro=1;showScr('<p style="max-width:460px;font-size:21px;line-height:1.55;margin:0 auto">'+INTRO[i]+'</p><button class="pri" data-a="in">Next <b>(Space)</b></button> <button data-a="skip">Skip <b>(K)</b></button>')}
 function popup(t,ms,cb){const e=$('pop');e.textContent=t;e.className='on';const c=S;setTimeout(()=>{if(S!==c)return;cb&&cb();if(e.textContent===t)e.className=''},ms)}
 const statsText=()=>'Night '+Math.min((S.night||0)+1,5)+' · Let in '+(S.in||0)+' · Turned away '+(S.out||0)+(S.sup?' · Supplies '+S.sup:'');
 function takeSigns(){const n=Math.random()<.4?2:1,o=[];while(o.length<n){if(!S.bag.length)S.bag=shuf(S.sigs.filter(x=>x!=='voice'||Math.random()<.5));const x=S.bag.pop();if(!o.includes(x))o.push(x)}return o}
 function finale(){S.state='radio';cam.position.set(0,1.6,.8);yaw=1.84;pitch=0;radioSay(['This is the emergency broadcast.','The Visitors have been driven from the valley.','It is safe outside. It is safe.','You can open your door.'],0,()=>endScreen('You survived'))}
-let MODE='solo',LB=null,RM=null,RMOFF=null,SEED=null;
-const mulb=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
-const hs=str=>{let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0};
-function withSeed(key,fn){if(!S.seed)return fn();const real=Math.random;Math.random=mulb(hs(S.seed+key));try{return fn()}finally{Math.random=real}}
 function skipRadio(){const c=S.rcur;if(!c||S.rdone)return;if(window.speechSynthesis)speechSynthesis.cancel();radioSay(c.l,c.l.length,c.fin)}
 function startNight(){const n=S.night,prev=NS[n-1]||[];S.i=0;S.count=[3,4,4,5,5][n];S.sigs=NS[n];decals.forEach((d,i)=>d.visible=n>=i+1);
- withSeed('n'+n,()=>{if(n>=1&&Math.random()<.6)later(outage,35000+Math.random()*50000);S.bag=[...shuf(prev),...shuf(NS[n].filter(x=>!prev.includes(x)))];S.ev=[];const ix=shuf([1,2,3,4].filter(k=>k<S.count));if(n>=1&&Math.random()<.7&&ix.length)S.ev.push({k:'ent',at:ix.pop()});if(n>=1&&Math.random()<.85&&ix.length)S.ev.push({k:'haz',at:ix.pop()});const nv=Math.max(1,Math.round(S.count*.45));S.vb=shuf(Array.from({length:S.count},(_,i)=>i<nv))});
+ {if(n>=1&&Math.random()<.6)later(outage,35000+Math.random()*50000);S.bag=[...shuf(prev),...shuf(NS[n].filter(x=>!prev.includes(x)))];S.ev=[];const ix=shuf([1,2,3,4].filter(k=>k<S.count));if(n>=1&&Math.random()<.7&&ix.length)S.ev.push({k:'ent',at:ix.pop()});if(n>=1&&Math.random()<.85&&ix.length)S.ev.push({k:'haz',at:ix.pop()});const nv=Math.max(1,Math.round(S.count*.45));S.vb=shuf(Array.from({length:S.count},(_,i)=>i<nv))}
  S.state='radio';S.p=null;S.busy=0;G.forEach(q=>scene.remove(q.g));G=[];hideScreen();topbar();cam.position.set(0,1.6,.8);yaw=1.84;pitch=0;
  const nw=NS[n].filter(x=>!prev.includes(x)),lines=['Night '+(n+1)+'. Stay inside.',(n?'Added symptoms: ':'Watch for these symptoms: ')+nw.map(x=>SIGNS[x]).join('; ')+'.'];radioSay(lines,0)}
 let RN=null;
@@ -363,7 +359,7 @@ const locked=()=>document.pointerLockElement===cv;
 cv.addEventListener('click',()=>{if(!locked())lock()});
 addEventListener('mousemove',e=>{if(!locked())return;yaw-=e.movementX*.0022;pitch=clamp(pitch-e.movementY*.0022,-1.4,1.4)});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
-addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(document.activeElement&&document.activeElement.id==='jc'){if(k==='enter')joinLobby();return}if(document.activeElement===$('ti')){if(k==='enter'){const v=$('ti').value.trim();$('ti').value='';closeTyp();if(v&&S.p&&!S.busy&&!S.p.kind)ask(S.p,v)}else if(k==='escape')closeTyp();return}keys[k]=1;if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();if(k===' ')e.preventDefault();
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(document.activeElement===$('ti')){if(k==='enter'){const v=$('ti').value.trim();$('ti').value='';closeTyp();if(v&&S.p&&!S.busy&&!S.p.kind)ask(S.p,v)}else if(k==='escape')closeTyp();return}keys[k]=1;if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();if(k===' ')e.preventDefault();
  if(k==='m')return toggleVoice();
  if(k==='t'&&S.state==='play'){e.preventDefault();return openTyp()}
  if(k==='f'){S.torch=!S.torch;return}
@@ -377,7 +373,7 @@ addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(document.activeEle
  if(k===' '||k==='enter'){const b=document.querySelector('#menu.on button.pri');if(b){b.click();return}if(S.state==='radio'&&S.rcur){skipRadio();return}if(S.state==='play'){if(S.peep)peep(false);else if(S.p&&S.p.knocked&&!S.busy&&near())peep(true)}return}
  if(S.peep&&k==='s')return peep(false);
  const m={'1':'q','2':'c',o:'open',g:'away'};if(m[k])act(m[k])});
-$('menu').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a;if(a==='solo'||a==='begin'){MODE='solo';SEED=null;intro(0)}else if(a==='create')enterLobby(codeGen(),true);else if(a==='join')joinLobby();else if(a==='start')startLobby();else if(a==='leave'||a==='menu')mainMenu();else if(a==='in')intro(S.ip+1);else if(a==='again'||a==='skip')newGame();else if(a==='next')startNight()});
+$('menu').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.a;if(a==='solo'||a==='begin')intro(0);else if(a==='menu')mainMenu();else if(a==='in')intro(S.ip+1);else if(a==='again'||a==='skip')newGame();else if(a==='next')startNight()});
 $('hud').addEventListener('click',e=>{const b=e.target.closest('button');if(b)act(b.dataset.a)});$('mute').addEventListener('click',toggleVoice);$('act').addEventListener('click',e=>{const b=e.target.closest('button');if(b)act(b.dataset.a)});
 // ---------- main loop
 const v3=new THREE.Vector3();
@@ -429,7 +425,6 @@ function monTick(dt,t){if(!MON)return;const g=MON.g,out=cam.position.z>13.5,dx=c
 function endScreen(t){showScr('<h1>'+t+'</h1><p class="mut">'+statsText()+'</p><button class="pri" data-a="again">Try again <b>(Space)</b></button> <button data-a="menu">Main menu</button>')}
 function toggleNote(){const n=$('note');if(n.classList.contains('on')){n.className='';return}if(cam.position.z>13.4&&Math.hypot(cam.position.x-NOTE.x,cam.position.z-NOTE.z)<2.2){n.innerHTML='<i>For whoever finds this.</i><br><br>HE can’t stand the light. Shine your flashlight straight at him when he’s chasing you and he’ll freeze for a few seconds. Don’t waste it. Then run.';n.className='on'}}
 function toggleJournal(){const j=$('jr');if(j.classList.contains('on')){j.className='';return}if(!S.sigs)return;j.innerHTML='<b>Symptoms you know</b><br>'+S.sigs.map(x=>'• '+SIGNS[x]).join('<br>')+'<br><br><span class="mut">Keep the fire alive: take logs from the pile in the back yard (E), add them at the fireplace (E).</span>';j.className='on'}
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function smartAns(p,q){const s=p.st,l=q.toLowerCase(),H=!p.v;
  const T=[
  [/\b(name|call you|who are you)\b/,['I’m '+p.n+'.',p.n+'. Please, can we hurry?'],[p.n+'. Is that what you wanted?','I am… '+p.n+'. Yes.']],
@@ -472,20 +467,8 @@ function horrorTick(dt,t,pk){
  if(STK&&Math.hypot(cx-STK.g.position.x,cz-STK.g.position.z)<4)clearStalk();
  if(pk&&P&&!S.busy&&!AN){S.hbT=(S.hbT||0)+dt;S.hbN=(S.hbN||0)-dt;if(S.hbN<=0){S.hbN=Math.max(.5,1.2-S.hbT*.015);snd(70,35,.12,.5,'sine');setTimeout(()=>snd(60,32,.1,.3,'sine'),150)}}}
 setInterval(()=>{if((S.state==='play'||S.state==='radio')&&Math.random()<.5)bolt()},26000);setInterval(()=>{if(S.state==='play'&&Math.random()<.5)winFace()},38000);
-function boardRender(peers){const b=$('board');b.textContent='';peers.filter(p=>!p.isMe&&p.presence&&p.presence.n).forEach(p=>{const d=document.createElement('div');d.textContent=String(p.presence.n).slice(0,20)+' · night '+((+p.presence.night||0)+1)+' · '+(p.presence.dead?'dead':'alive');b.appendChild(d)})}
-(async()=>{try{if(window.claude&&claude.use){SMP=await claude.use('sample');ROOM=await claude.use('room');if(ROOM){ROOM.onPeers(c=>{if(!RM)boardRender(c.peers)});pres();if(S.state==='menu'&&!LB&&!S.intro)mainMenu()}}}catch(e){}})();
-const codeGen=()=>Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ'[Math.random()*24|0]).join('');
-async function enterLobby(code,host){if(!ROOM)return;leaveLobby();LB={code,host,go:null,started:0};try{const r=await ROOM.join('lb-'+code.toLowerCase());if(!LB||LB.code!==code){r.leave();return}RM=r;RMOFF=r.onPeers(c=>lobbyWatch(c.peers));pres();lobbyScreen([])}catch(e){LB=null;RM=null;mainMenu()}}
-function lobbyWatch(peers){if(!LB||!RM)return;const ps=peers.filter(q=>q.kind==='viewer'&&q.presence&&q.presence.n).sort((a,b)=>a.peer<b.peer?-1:1);boardRender(peers);
- if(!LB.started&&ps.length>4&&ps.findIndex(q=>q.isMe)>=4){leaveLobby();showScr('<h1>Lobby full</h1><p class="mut">Lobbies hold up to 4 players.</p><button class="pri" data-a="menu">Back</button>');return}
- const g=ps.find(q=>!q.isMe&&q.presence.go);if(g&&!LB.started&&S.state==='menu'){LB.started=1;SEED=String(g.presence.go);MODE='lobby';intro(0);return}
- if(S.state==='menu'&&!LB.started&&!S.intro)lobbyScreen(ps)}
-function lobbyScreen(ps){showScr('<h1>Lobby '+LB.code+'</h1><p class="mut">Share this code. Up to 4 players get the same visitors every night.</p><div style="margin:10px 0">'+(ps.length?ps.map(q=>'<div>'+esc(q.presence.n)+(q.presence.host?' (host)':'')+(q.isMe?' · you':'')+'</div>').join(''):'<div>Connecting…</div>')+'</div>'+(LB.host?'<button class="pri" data-a="start">Start game <b>(Space)</b></button> ':'<p class="mut">Waiting for the host to start…</p>')+'<button data-a="leave">Leave lobby</button>')}
-function startLobby(){if(!LB||!LB.host)return;LB.go=Math.random().toString(36).slice(2,8);SEED=LB.go;MODE='lobby';LB.started=1;pres();intro(0)}
-function joinLobby(){const c=(($('jc')||{}).value||'').trim().toUpperCase();if(c.length>=3)enterLobby(c,false)}
-function leaveLobby(){if(RMOFF){try{RMOFF()}catch(e){}RMOFF=null}if(RM){try{RM.presence({n:null,lobby:null,go:null,host:null})}catch(e){}try{RM.leave()}catch(e){}RM=null}LB=null;MODE='solo';SEED=null;$('board').textContent=''}
-function mainMenu(){leaveLobby();resetWorld();S={state:'menu',strikes:0,night:0};topbar();showScr('<h1>Don’t Let Them In</h1><p class="mut">Night after night, something knocks.</p><button class="pri" data-a="solo">Play solo <b>(Space)</b></button><p style="margin:14px 0 4px"><button data-a="create" '+(ROOM?'':'disabled')+'>Create lobby (up to 4)</button> <input id="jc" maxlength="4" placeholder="CODE" style="width:84px;text-transform:uppercase;background:#120d0c;color:inherit;border:1px solid #4a3d36;padding:9px;font:inherit"> <button data-a="join" '+(ROOM?'':'disabled')+'>Join</button></p>'+(ROOM?'':'<p class="mut">Lobbies need the Claude-hosted version, opened while signed in.</p>'))}
-function pres(){try{const r=RM||ROOM;if(r)r.presence({n:ME,night:S.night||0,dead:S.state==='dead',lobby:LB?LB.code:null,host:LB&&LB.host?1:0,go:LB&&LB.go||null})}catch(e){}}
+(async()=>{try{if(window.claude&&claude.use)SMP=await claude.use('sample')}catch(e){}})();
+function mainMenu(){resetWorld();S={state:'menu',strikes:0,night:0};topbar();showScr('<h1>Don’t Let Them In</h1><p class="mut">Night after night, something knocks.</p><button class="pri" data-a="solo">Play <b>(Space)</b></button>')}
 mainMenu();
 requestAnimationFrame(ms=>{t0=ms/1000;frame(ms)});
 </script></body></html>
